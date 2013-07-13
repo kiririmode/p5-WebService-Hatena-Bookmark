@@ -60,5 +60,15 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kiririmode/p5-WebService-Hatena-Bookmark/issues"
+      },
+      "homepage" : "https://github.com/kiririmode/p5-WebService-Hatena-Bookmark",
+      "repository" : {
+         "url" : "https://github.com/kiririmode/p5-WebService-Hatena-Bookmark.git",
+         "web" : "https://github.com/kiririmode/p5-WebService-Hatena-Bookmark"
+      }
+   },
    "version" : "0.01"
 }
