@@ -3,6 +3,7 @@ use 5.008005;
 use strict;
 use warnings;
 
+use WebService::Hatena::Bookmark::Util;
 use XML::Atom::Client;
 use XML::Atom::Entry;
 use XML::XPath;
@@ -42,7 +43,7 @@ sub add {
     $link->href($args{link});
     $entry->add_link($link);
 
-    my $summary = $self->make_summary( tags => $args{tags}, comment => $args{comment} );
+    my $summary = make_summary( tags => $args{tags}, comment => $args{comment} );
     $entry->summary( encode('utf-8' => $summary ) );
 
     my $loc = $self->{client}->createEntry(POST_URI, $entry)
@@ -64,7 +65,7 @@ sub edit {
     my $tags    = delete $args{tags};
     my $comment = delete $args{comment};
     
-    my $summary = $self->make_summary( tags => $tags, comment => $comment );
+    my $summary = make_summary( tags => $tags, comment => $comment );
 
     my $entry = XML::Atom::Entry->new;
     $entry->title(   encode('utf-8' => $title) )    if $title;
@@ -83,7 +84,7 @@ sub delete {
 sub feed {
     my ($self, %args) = @_;
 
-    my $query = $self->make_feed_query( %args );
+    my $query = make_feed_query( %args );
     $self->{client}->getFeed( FEED_URI . '?' . $query ) or croak $self->{client}->errstr;
 }
 
@@ -95,34 +96,6 @@ sub edituri {
 
     my $xp = XML::XPath->new( xml => $res->as_xml );
     $xp->findnodes( '//link[@rel="service.edit"]/@href' )->string_value;
-}
-
-sub make_summary {
-    my ($self, %args ) = @_;
-
-    my $tags = delete $args{tags} || [];
-    my @tags    = @{ $tags };
-    my $tag_str = @tags?          join('', map "[$_]", @tags) : '';
-
-    my $comment = $args{comment}? $args{comment}              : '';
-
-    my $summary = $tag_str . $comment;
-}
-
-sub make_feed_query {
-    my ($self, %args) = @_;
-
-    my @query;
-
-    if ( $args{tags} ) {
-        my $tags = delete $args{tags};
-        push @query, "tag=$_" for @$tags;
-    }
-    if ( $args{date} ) {
-        push @query, "date=$args{date}"
-    }
-
-    join '&', @query;
 }
 
 1;
