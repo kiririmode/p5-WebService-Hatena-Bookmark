@@ -20,4 +20,16 @@ subtest 'make_feed_query' => sub {
 
 };
 
+subtest 'tags_from_entry' => sub {
+    my $xml = <<'XML';
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://purl.org/atom/ns#">
+    <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">test</dc:subject>
+    <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">test1</dc:subject>
+  </entry>
+XML
+
+    is_deeply tags_from_entry($xml), [qw/test test1/], 'tags from entry';
+};
+
 done_testing;

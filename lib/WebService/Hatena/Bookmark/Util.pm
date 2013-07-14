@@ -3,8 +3,10 @@ use 5.008005;
 use strict;
 use warnings;
 
+use XML::XPath;
+
 use Exporter 'import';
-our @EXPORT = qw/make_summary make_feed_query/;
+our @EXPORT = qw/make_summary make_feed_query tags_from_entry/;
 
 sub make_summary {
     my (%args) = @_;
@@ -32,6 +34,17 @@ sub make_feed_query {
     }
 
     join '&', @query;
+}
+
+sub tags_from_entry {
+    my ($xml) = @_;
+
+    my @tags;
+
+    my $xp = XML::XPath->new( xml => $xml );
+    push(@tags, $_->string_value) for $xp->findnodes('//dc:subject');
+
+    \@tags;
 }
 
 1;

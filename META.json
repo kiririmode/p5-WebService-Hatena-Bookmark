@@ -46,6 +46,7 @@
             "Encode" : "0",
             "XML::Atom::Client" : "0",
             "XML::Atom::Entry" : "0",
+            "XML::XPath" : "0",
             "constant" : "0",
             "perl" : "5.008005"
          }
