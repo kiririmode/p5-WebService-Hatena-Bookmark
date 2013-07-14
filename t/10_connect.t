@@ -50,6 +50,10 @@ subtest "refer a bookmark" => sub {
     ok $hb->feed( tags => [qw/test3 test/] );
 };
 
+subtest "get editURI" => sub {
+    my $edituri = $hb->edituri( url => 'http://www.google.co.jp/' );
+    like $edituri, qr[http://b.hatena.ne.jp/atom/edit/\d+], 'get editURI';
+};
 
 subtest "delete a bookmark" => sub {
     ok $hb->delete( link => $loc ), 'delete a bookmark';

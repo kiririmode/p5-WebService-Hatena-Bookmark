@@ -5,6 +5,7 @@ use warnings;
 
 use XML::Atom::Client;
 use XML::Atom::Entry;
+use XML::XPath;
 use Encode;
 use Carp;
 use constant POST_URI => 'http://b.hatena.ne.jp/atom/post';
@@ -12,7 +13,6 @@ use constant FEED_URI => 'http://b.hatena.ne.jp/atom/feed';
 use constant EDIT_URI => 'http://b.hatena.ne.jp/atom/edit';
 
 our $VERSION = "0.01";
-
 
 # TODO: OAuth 認証対応
 
@@ -85,6 +85,16 @@ sub feed {
 
     my $query = $self->make_feed_query( %args );
     $self->{client}->getFeed( FEED_URI . '?' . $query ) or croak $self->{client}->errstr;
+}
+
+sub edituri {
+    my ($self, %args) = @_;
+
+    my $url = delete $args{url};
+    my $res = $self->{client}->getEntry( EDIT_URI . '?' . "url=$url" ) or croak $self->{client}->errstr;
+
+    my $xp = XML::XPath->new( xml => $res->as_xml );
+    $xp->findnodes( '//link[@rel="service.edit"]/@href' )->string_value;
 }
 
 sub make_summary {
