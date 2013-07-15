@@ -40,11 +40,11 @@ sub make_feed_query {
 }
 
 sub tags_from_entry {
-    my ($xml) = @_;
+    my ($entry) = @_;
 
     my @tags;
 
-    my $xp = XML::XPath->new( xml => $xml );
+    my $xp = XML::XPath->new( xml => $entry->as_xml );
     push(@tags, $_->string_value) for $xp->findnodes('//dc:subject');
 
     \@tags;

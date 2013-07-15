@@ -30,7 +30,8 @@ subtest 'tags_from_entry' => sub {
   </entry>
 XML
 
-    is_deeply tags_from_entry($xml), [qw/test test1/], 'tags from entry';
+    my $entry = XML::Atom::Entry->new( \$xml );
+    is_deeply tags_from_entry($entry), [qw/test test1/], 'tags from entry';
 };
 
 subtest 'paging' => sub {
