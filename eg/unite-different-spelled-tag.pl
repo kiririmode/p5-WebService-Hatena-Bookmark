@@ -19,7 +19,7 @@ do {
     $feed = $hb->feed( tags => [$opts{from}] );
 
     foreach my $entry ( $feed->entries ) {
-        my $orig_tags = tags_from_entry($entry->as_xml);
+        my $orig_tags = tags_from_entry($entry);
     
         my $converted_tags   = [ grep { $_ ne $opts{from} } @$orig_tags ];
         push @$converted_tags, $opts{to};
