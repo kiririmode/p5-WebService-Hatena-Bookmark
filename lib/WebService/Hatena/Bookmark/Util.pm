@@ -6,7 +6,7 @@ use warnings;
 use XML::XPath;
 
 use Exporter 'import';
-our @EXPORT = qw/make_summary make_feed_query tags_from_entry/;
+our @EXPORT = qw/make_summary make_feed_query tags_from_entry has_prev has_next/;
 
 sub make_summary {
     my (%args) = @_;
@@ -32,6 +32,9 @@ sub make_feed_query {
     if ( $args{date} ) {
         push @query, "date=$args{date}"
     }
+    if ( $args{offset} ) {
+        push @query, "of=$args{offset}"
+    }
 
     join '&', @query;
 }
@@ -45,6 +48,20 @@ sub tags_from_entry {
     push(@tags, $_->string_value) for $xp->findnodes('//dc:subject');
 
     \@tags;
+}
+
+sub has_prev {
+    _has_paging($_[0], 'prev');
+}
+
+sub has_next {
+    _has_paging($_[0], 'next');
+}
+
+sub _has_paging {
+    my ($feed, $direction) = @_;
+
+    grep { $_->rel eq $direction } $feed->link;
 }
 
 1;

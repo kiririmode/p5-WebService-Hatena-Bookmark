@@ -2,6 +2,7 @@ use warnings;
 use strict;
 use Test::More;
 use Test::Flatten;
+use XML::Atom::Feed;
 use WebService::Hatena::Bookmark::Util;
 use utf8;
 
@@ -30,6 +31,42 @@ subtest 'tags_from_entry' => sub {
 XML
 
     is_deeply tags_from_entry($xml), [qw/test test1/], 'tags from entry';
+};
+
+subtest 'paging' => sub {
+    my $paging = <<'XML';
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://purl.org/atom/ns#" xml:lang="ja">
+  <link rel="next" type="application/x.atom+xml" href="http://b.hatena.ne.jp/hoge/atomfeed?of=40"/>
+  <link rel="prev" type="application/x.atom+xml" href="http://b.hatena.ne.jp/hoge/atomfeed?of=0"/>
+</feed>
+XML
+    my $paging_atom = XML::Atom::Feed->new( \$paging );
+
+    my $next = <<'XML2';
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://purl.org/atom/ns#" xml:lang="ja">
+  <link rel="next" type="application/x.atom+xml" href="http://b.hatena.ne.jp/hoge/atomfeed?of=20"/>
+</feed>
+XML2
+    my $next_atom = XML::Atom::Feed->new( \$next );
+
+    my $prev = <<'XML3';
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://purl.org/atom/ns#" xml:lang="ja">
+  <link rel="prev" type="application/x.atom+xml" href="http://b.hatena.ne.jp/hoge/atomfeed?of=20"/>
+</feed>
+XML3
+    my $prev_atom = XML::Atom::Feed->new( \$prev );
+
+    ok(     has_prev($paging_atom), 'have prev');
+    ok(     has_next($paging_atom), 'have next');
+
+    ok((not has_prev($next_atom)),  'not have prev');
+    ok(     has_next($next_atom),   'have next');
+
+    ok(     has_prev($prev_atom),   'have prev');
+    ok((not has_next($prev_atom)),  'have next');
 };
 
 done_testing;

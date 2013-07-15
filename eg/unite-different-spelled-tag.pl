@@ -14,15 +14,21 @@ my $conf = Config::Pit::get('www.hatena.ne.jp', require => {
 
 my $hb = WebService::Hatena::Bookmark->new( %$conf );
 
-my $feed = $hb->feed( tags => [$opts{from}] );
-foreach my $entry ( $feed->entries ) {
-    my $orig_tags = tags_from_entry($entry->as_xml);
+my ($cnt, $feed);
+do {
+    $feed = $hb->feed( tags => [$opts{from}] );
 
-    my $converted_tags   = [ grep { $_ ne $opts{from} } @$orig_tags ];
-    push @$converted_tags, $opts{to};
-
-    $hb->edit( link => edituri($entry), tags => $converted_tags );
-}
+    foreach my $entry ( $feed->entries ) {
+        my $orig_tags = tags_from_entry($entry->as_xml);
+    
+        my $converted_tags   = [ grep { $_ ne $opts{from} } @$orig_tags ];
+        push @$converted_tags, $opts{to};
+    
+        $hb->edit( link => edituri($entry), tags => $converted_tags );
+        $cnt++;
+    }
+    print "$cnt entries processed.\n";
+} while ( has_next( $feed ) );
 
 sub edituri {
     my $entry = shift;
