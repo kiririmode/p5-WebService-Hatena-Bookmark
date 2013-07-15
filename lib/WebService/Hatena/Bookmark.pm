@@ -6,7 +6,6 @@ use warnings;
 use WebService::Hatena::Bookmark::Util;
 use XML::Atom::Client;
 use XML::Atom::Entry;
-use XML::XPath;
 use Encode;
 use Carp;
 use constant POST_URI => 'http://b.hatena.ne.jp/atom/post';
@@ -94,8 +93,8 @@ sub edituri {
     my $url = delete $args{url};
     my $res = $self->{client}->getEntry( EDIT_URI . '?' . "url=$url" ) or croak $self->{client}->errstr;
 
-    my $xp = XML::XPath->new( xml => $res->as_xml );
-    $xp->findnodes( '//link[@rel="service.edit"]/@href' )->string_value;
+    my @link = grep { $_->rel eq 'service.edit' } $res->link;
+    $link[0]->href;
 }
 
 1;

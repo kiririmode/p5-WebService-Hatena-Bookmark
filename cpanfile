@@ -10,7 +10,6 @@ on 'test' => sub {
 on 'runtime' => sub {
     requires 'XML::Atom::Client';
     requires 'XML::Atom::Entry';
-    requires 'XML::XPath';
     requires 'Encode';
     requires 'Carp';
     requires 'constant';
